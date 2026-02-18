@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Fixofix Email Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+  <h2>Fixofix</h2>
+  <p class="subtitle">Verify Your Email</p>
+
+  <input type="text" id="name" placeholder="Full Name" required>
+  <input type="email" id="email" placeholder="Email Address" required>
+
+<button id="sendBtn">Send OTP</button>
+
+  <div class="message" id="message"></div>
+</div>
+
+<script>
+document.getElementById("sendBtn").addEventListener("click", async function () {
+
+  const nameValue = document.getElementById("name").value.trim();
+  const emailValue = document.getElementById("email").value.trim();
+  const message = document.getElementById("message");
+
+  if (!nameValue || !emailValue) {
+    message.style.color = "red";
+    message.innerText = "Please fill all fields";
+    return;
+  }
+
+  this.disabled = true;
+  this.innerText = "Sending...";
+
+  try {
+    const response = await fetch("http://localhost:3000/send-email-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: nameValue,
+        email: emailValue
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      localStorage.setItem("email", emailValue);
+      window.location.href = "otp.html";
+    } else {
+      message.style.color = "red";
+      message.innerText = "Failed to send OTP";
+      this.disabled = false;
+      this.innerText = "Send OTP";
+    }
+
+  } catch (error) {
+    message.style.color = "red";
+    message.innerText = "Server error. Try again.";
+    this.disabled = false;
+    this.innerText = "Send OTP";
+  }
+});
+</script>
+
+
+</body>
+</html>

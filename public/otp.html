@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email Verification</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="card">
+
+  <div class="back-btn" onclick="goBack()">← Back</div>
+
+  <h2>Enter verification code</h2>
+  <p class="subtitle">We sent a 6-digit code to your email</p>
+
+  <input type="text" id="otp" maxlength="6" placeholder="Enter 6-digit code">
+
+  <div class="otp-actions">
+    <button onclick="verifyOTP()">Continue</button>
+    <div class="resend" onclick="resendOTP()">Resend code</div>
+  </div>
+
+  <div class="message" id="message"></div>
+</div>
+
+<script>
+function verifyOTP() {
+  fetch("http://localhost:3000/verify-email-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: localStorage.getItem("email"),
+      otp: otp.value
+    })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if(data.success){
+  document.querySelector(".card").innerHTML = `
+    <h2 style="margin-bottom:10px;">You're all set 🎉</h2>
+    <p class="subtitle">Your email has been successfully verified.</p>
+    <button onclick="goToHome()" style="margin-top:20px;">Continue</button>
+  `;
+}
+ else {
+      message.style.color = "red";
+      message.innerText = data.message;
+    }
+  });
+}
+
+function resendOTP() {
+  fetch("http://localhost:3000/send-email-otp", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: localStorage.getItem("email")
+    })
+  });
+
+  message.style.color = "#000";
+  message.innerText = "New code sent to your email.";
+}
+
+function goBack() {
+  window.location.href = "register.html";
+}
+
+function goToHome(){
+  window.location.href = "register.html"; // change to your dashboard page later
+}
+
+</script>
+
+</body>
+</html>
