@@ -10,7 +10,11 @@ const app = express();
 // ---------------- Middleware ----------------
 app.use(express.json());
 app.use(cors());
-app.use(express.static("public")); // Serve frontend files
+app.use(express.static(__dirname));
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 // ---------------- Database ----------------
 const pool = new Pool({
@@ -144,3 +148,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
