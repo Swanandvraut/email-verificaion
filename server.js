@@ -39,9 +39,14 @@ function generateOTP() {
 }
 
 // ---------------- Root Route ----------------
+// Serve static files from root directory
+app.use(express.static(__dirname));
+
+// Load index.html on root
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
+  res.sendFile(__dirname + "/index.html");
 });
+
 
 // ---------------- SEND EMAIL OTP ----------------
 app.post("/send-email-otp", async (req, res) => {
@@ -148,4 +153,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
 
